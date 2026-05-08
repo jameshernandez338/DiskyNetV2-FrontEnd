@@ -1,0 +1,76 @@
+<header class="sticky top-0 z-20 border-b border-slate-200 bg-white shadow-sm">
+  <div class="flex h-14 items-center gap-2 px-4">
+
+    <!-- Botón colapsar nav (desktop) / abrir nav (mobile) -->
+    <button
+      type="button"
+      class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-200 lg:hidden"
+      aria-label="Abrir menu"
+      [attr.aria-expanded]="isNavigationOpen"
+      aria-controls="app-navigation"
+      (click)="navigationToggle.emit()"
+    >
+      <lucide-icon [img]="icons.Menu" class="h-5 w-5"></lucide-icon>
+    </button>
+
+    <button
+      type="button"
+      class="hidden h-9 w-9 shrink-0 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-200 lg:inline-flex"
+      [attr.aria-label]="isNavigationCollapsed ? 'Mostrar menu' : 'Ocultar menu'"
+      [attr.aria-expanded]="!isNavigationCollapsed"
+      aria-controls="app-navigation"
+      (click)="navigationCollapseToggle.emit()"
+    >
+      <lucide-icon [img]="icons.Menu" class="h-5 w-5"></lucide-icon>
+    </button>
+
+    <!-- Logo (mobile) -->
+    <a routerLink="/home" class="flex min-w-0 items-center lg:hidden">
+      <img src="images/auth/login_logo.png" alt="DiskyNet" class="h-8 w-auto object-contain" />
+    </a>
+
+    <!-- Spacer -->
+    <div class="flex-1"></div>
+
+    <!-- Acciones derecha -->
+    <div class="flex items-center gap-1">
+
+      <!-- Home -->
+      <a
+        routerLink="/home"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        aria-label="Ir al inicio"
+        appTooltip="Ir al inicio"
+        appTooltipPosition="bottom"
+      >
+        <lucide-icon [img]="icons.House" class="h-5 w-5"></lucide-icon>
+      </a>
+
+      <!-- Divider -->
+      <span class="mx-1 h-5 w-px bg-slate-200"></span>
+
+      <!-- Usuario -->
+      <div class="flex items-center gap-2 rounded-md px-2.5 py-1.5">
+        <div class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+          <lucide-icon [img]="icons.UserRound" class="h-4 w-4"></lucide-icon>
+        </div>
+        <span class="hidden max-w-40 truncate text-sm font-medium text-slate-700 sm:block">{{ fullName }}</span>
+      </div>
+
+      <!-- Divider -->
+      <span class="mx-1 h-5 w-px bg-slate-200"></span>
+
+      <!-- Logout -->
+      <button
+        type="button"
+        class="inline-flex h-9 w-9 items-center justify-center rounded-md text-slate-500 transition hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+        aria-label="Cerrar sesion"
+        appTooltip="Cerrar sesion"
+        appTooltipPosition="bottom"
+        (click)="logout()"
+      >
+        <lucide-icon [img]="icons.LogOut" class="h-5 w-5"></lucide-icon>
+      </button>
+    </div>
+  </div>
+</header>

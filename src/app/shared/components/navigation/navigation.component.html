@@ -1,0 +1,91 @@
+@if (isOpen) {
+  <button
+    type="button"
+    class="fixed inset-0 z-30 bg-slate-950/40 backdrop-blur-sm lg:hidden"
+    aria-label="Cerrar menu"
+    (click)="navigationClose.emit()"
+  ></button>
+}
+
+<nav
+  id="app-navigation"
+  class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-200 bg-white shadow-xl transition-transform duration-200 ease-out lg:static lg:z-auto lg:min-h-full lg:w-full lg:translate-x-0 lg:shadow-none"
+  [ngClass]="isOpen ? 'translate-x-0' : '-translate-x-full'"
+>
+  <div class="flex h-16 items-center justify-between gap-3 border-b border-slate-200 px-4 lg:hidden">
+    <span class="text-sm font-bold text-slate-900">Menu</span>
+    <button
+      type="button"
+      class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-500 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-200"
+      aria-label="Cerrar menu"
+      title="Cerrar menu"
+      (click)="navigationClose.emit()"
+    >
+      <lucide-icon [img]="icons.X" class="h-5 w-5"></lucide-icon>
+    </button>
+  </div>
+
+  <div
+    class="flex flex-1 flex-col gap-0.5 overflow-y-auto px-4 py-3 lg:py-3"
+    [ngClass]="isCollapsed ? 'lg:px-3' : 'lg:px-4'"
+  >
+    @for (menu of menus(); track trackByMenuId($index, menu)) {
+      @if (isLink(menu)) {
+        <a
+          [routerLink]="menu.menuRoute"
+          routerLinkActive="bg-blue-50 text-blue-700"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="inline-flex h-9 shrink-0 items-center gap-2.5 rounded-md px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          [ngClass]="isCollapsed ? 'lg:justify-center lg:px-0' : ''"
+          [appTooltip]="isCollapsed ? menu.menuName : ''"
+          appTooltipPosition="right"
+          (click)="navigationClose.emit()"
+        >
+          <lucide-icon [img]="getIcon(menu.icon)" class="h-5 w-5 shrink-0"></lucide-icon>
+          <span [ngClass]="isCollapsed ? 'lg:sr-only' : ''">{{ menu.menuName }}</span>
+        </a>
+      } @else {
+        <button
+          type="button"
+          class="mt-1 flex h-9 w-full shrink-0 items-center gap-2.5 rounded-md px-3 text-left text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-200"
+          [ngClass]="isCollapsed ? 'lg:justify-center lg:px-0' : ''"
+          [appTooltip]="isCollapsed ? menu.menuName : ''"
+          appTooltipPosition="right"
+          [attr.aria-expanded]="isGroupExpanded(menu)"
+          (click)="toggleGroup(menu)"
+        >
+          <lucide-icon [img]="getIcon(menu.icon)" class="h-5 w-5 shrink-0"></lucide-icon>
+          <span [ngClass]="isCollapsed ? 'lg:sr-only' : ''">{{ menu.menuName }}</span>
+          @if (!isCollapsed) {
+            <span class="ml-auto inline-flex items-center">
+              <lucide-icon
+                [img]="isGroupExpanded(menu) ? icons.ChevronDown : icons.ChevronRight"
+                class="h-4 w-4"
+              ></lucide-icon>
+            </span>
+          }
+        </button>
+
+        @if (isGroupExpanded(menu)) {
+          @for (child of menu.children; track trackByMenuId($index, child)) {
+            @if (isLink(child)) {
+              <a
+                [routerLink]="child.menuRoute"
+                routerLinkActive="bg-blue-50 text-blue-700"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="inline-flex h-9 shrink-0 items-center gap-2.5 rounded-md px-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-200"
+                [ngClass]="isCollapsed ? 'lg:justify-center lg:px-0' : 'lg:pl-7'"
+                [appTooltip]="isCollapsed ? menu.menuName + '/' + child.menuName : ''"
+                appTooltipPosition="right"
+                (click)="navigationClose.emit()"
+              >
+                <lucide-icon [img]="getIcon(child.icon)" class="h-5 w-5 shrink-0"></lucide-icon>
+                <span [ngClass]="isCollapsed ? 'lg:sr-only' : ''">{{ child.menuName }}</span>
+              </a>
+            }
+          }
+        }
+      }
+    }
+  </div>
+</nav>

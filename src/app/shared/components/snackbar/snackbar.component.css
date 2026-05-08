@@ -1,0 +1,142 @@
+.snackbar-host {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+  display: flex;
+  width: min(420px, calc(100vw - 32px));
+  pointer-events: none;
+}
+
+.snackbar {
+  --snackbar-accent: #16a34a;
+  --snackbar-soft: #ecfdf5;
+  --snackbar-ring: rgba(22, 163, 74, 0.18);
+
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 36px;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 10px;
+  overflow: hidden;
+  color: #172033;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-left: 4px solid var(--snackbar-accent);
+  border-radius: 8px;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.16), 0 4px 14px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(14px);
+  pointer-events: auto;
+  animation: snackbar-enter 220ms ease-out;
+}
+
+.snackbar::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  content: '';
+  background: var(--snackbar-accent);
+  transform-origin: left;
+  animation: snackbar-progress 5s linear forwards;
+}
+
+.snackbar--success {
+  --snackbar-accent: #16a34a;
+  --snackbar-soft: #ecfdf5;
+  --snackbar-ring: rgba(22, 163, 74, 0.18);
+}
+
+.snackbar--warning {
+  --snackbar-accent: #d97706;
+  --snackbar-soft: #fffbeb;
+  --snackbar-ring: rgba(217, 119, 6, 0.2);
+}
+
+.snackbar--error {
+  --snackbar-accent: #dc2626;
+  --snackbar-soft: #fef2f2;
+  --snackbar-ring: rgba(220, 38, 38, 0.18);
+}
+
+.snackbar__icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  color: var(--snackbar-accent);
+}
+
+.snackbar__content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding-right: 4px;
+}
+
+.snackbar__content strong {
+  font-size: 0.92rem;
+  line-height: 1.15;
+}
+
+.snackbar__content span {
+  overflow-wrap: anywhere;
+  color: #526078;
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.snackbar__close {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  align-self: center;
+  color: #64748b;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.snackbar__close:hover {
+  color: #172033;
+  background: rgba(15, 23, 42, 0.07);
+}
+
+@keyframes snackbar-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(18px, 8px, 0) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes snackbar-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .snackbar-host {
+    right: 16px;
+    bottom: 16px;
+    left: 16px;
+    width: auto;
+  }
+}

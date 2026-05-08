@@ -1,0 +1,92 @@
+<main class="flex min-h-screen items-center justify-center bg-slate-100 px-4">
+  <div
+    class="grid w-full max-w-5xl overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm lg:grid-cols-2"
+  >
+    <!-- LOGIN -->
+    <section class="flex items-center justify-center p-8 lg:p-12">
+      <div class="w-full max-w-md">
+        <div class="mb-8">
+          <h1 class="text-2xl font-bold text-slate-800">
+            Bienvenido
+          </h1>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Ingrese sus credenciales para continuar
+          </p>
+        </div>
+
+        <form
+          [formGroup]="loginForm"
+          (ngSubmit)="login()"
+          class="space-y-4"
+        >
+          <!-- USER -->
+          <label
+            class="flex h-11 items-center rounded-lg border border-slate-300 bg-white px-4 transition focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100"
+          >
+            <input
+              type="text"
+              formControlName="userName"
+              placeholder="Usuario o correo"
+              class="w-full border-0 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-0"
+            />
+          </label>
+
+          <!-- PASSWORD -->
+          <label
+            class="flex h-11 items-center rounded-lg border border-slate-300 bg-white px-4 transition focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100"
+          >
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              placeholder="Contraseña"
+              class="w-full border-0 bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-0"
+            />
+
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="ml-2 flex h-8 w-8 items-center justify-center rounded-md text-slate-500 transition hover:bg-slate-100"
+            >
+              <lucide-angular
+                [img]="showPassword ? icons.EyeOff : icons.Eye"
+                class="h-5 w-5"
+              ></lucide-angular>
+            </button>
+          </label>
+
+          <!-- BUTTON -->
+          <button
+            type="submit"
+            class="h-11 w-full rounded-lg bg-blue-600 text-sm font-medium text-white transition hover:bg-blue-700"
+          >
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- RIGHT PANEL -->
+    <aside
+      class="hidden flex-col items-center justify-center bg-slate-50 p-10 lg:flex"
+    >
+      <img
+        src="/images/auth/login_logo.png"
+        alt="Dislana"
+        class="max-w-[280px] object-contain opacity-95"
+      />
+
+      <div class="mt-8 text-center">
+        <h2 class="text-xl font-semibold text-slate-700">
+          Portal DiskyNet
+        </h2>
+
+      </div>
+    </aside>
+  </div>
+</main>
+
+<app-loading-spinner
+  [show]="loading()"
+  message="Validando..."
+></app-loading-spinner>

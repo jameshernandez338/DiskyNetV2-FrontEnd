@@ -1,0 +1,21 @@
+<section class="snackbar-host" aria-live="polite" aria-atomic="true">
+  <div
+    *ngIf="snackbar() as current"
+    class="snackbar"
+    [ngClass]="'snackbar--' + current.type"
+    role="status"
+  >
+    <div class="snackbar__icon">
+      <lucide-icon [img]="icon()" [size]="22" [strokeWidth]="2.4"></lucide-icon>
+    </div>
+
+    <div class="snackbar__content">
+      <strong>{{ title() }}</strong>
+      <span>{{ current.message }}</span>
+    </div>
+
+    <button type="button" class="snackbar__close" aria-label="Cerrar notificacion" (click)="hide()">
+      <lucide-icon [img]="icons.close" [size]="18" [strokeWidth]="2.2"></lucide-icon>
+    </button>
+  </div>
+</section>

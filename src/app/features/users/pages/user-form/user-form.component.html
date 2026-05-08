@@ -1,0 +1,218 @@
+<app-loading-spinner [show]="isLoading()" message="Cargando datos..." />
+<app-loading-spinner [show]="isSaving()" [message]="isEditMode() ? 'Guardando cambios...' : 'Creando usuario...'" />
+
+<!-- Page header -->
+<div class="mb-5 flex items-center justify-between">
+  <nav class="flex items-center gap-1.5 text-sm text-slate-400">
+    <a
+      routerLink="/home"
+      class="flex items-center gap-1 font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      <lucide-angular [img]="icons.House" class="h-4 w-4"></lucide-angular>
+      Home
+    </a>
+    <lucide-angular [img]="icons.ChevronRight" class="h-3.5 w-3.5"></lucide-angular>
+    <a
+      routerLink="/usuarios"
+      class="font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      Usuarios
+    </a>
+    <lucide-angular [img]="icons.ChevronRight" class="h-3.5 w-3.5"></lucide-angular>
+    <span class="font-semibold text-slate-700">{{ isEditMode() ? 'Editar usuario' : 'Nuevo usuario' }}</span>
+  </nav>
+
+  <h1 class="text-xl font-bold text-slate-800">{{ isEditMode() ? 'Editar usuario' : 'Nuevo usuario' }}</h1>
+</div>
+
+<!-- Card -->
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+  <!-- Card header -->
+  <div class="border-b border-slate-100 px-6 py-4">
+    <p class="text-sm text-slate-500">
+      {{ isEditMode() ? 'Modifique los datos del usuario.' : 'Complete los datos para crear un nuevo usuario.' }}
+    </p>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="flex items-center justify-center py-16 text-slate-400 text-sm">
+      Cargando datos del usuario...
+    </div>
+  }
+
+  <!-- Form -->
+  @if (!isLoading()) {
+    <form [formGroup]="form" (ngSubmit)="save()" class="px-6 py-6">
+      <div class="grid gap-5 sm:grid-cols-2">
+
+        <!-- Primer nombre -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Primer nombre <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="firstName"
+            placeholder="Ej. Juan"
+            class="h-9 w-full rounded-md border px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2"
+            [class.border-red-300]="hasError('firstName')"
+            [class.focus:ring-red-100]="hasError('firstName')"
+            [class.border-slate-200]="!hasError('firstName')"
+            [class.focus:ring-slate-100]="!hasError('firstName')"
+          />
+          @if (hasError('firstName')) {
+            <p class="mt-1 text-xs text-red-500">El primer nombre es obligatorio.</p>
+          }
+        </div>
+
+        <!-- Segundo nombre -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Segundo nombre
+          </label>
+          <input
+            type="text"
+            formControlName="middleName"
+            placeholder="Ej. Carlos"
+            class="h-9 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2 focus:ring-slate-100"
+          />
+        </div>
+
+        <!-- Primer apellido -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Primer apellido <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="lastName"
+            placeholder="Ej. Pérez"
+            class="h-9 w-full rounded-md border px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2"
+            [class.border-red-300]="hasError('lastName')"
+            [class.focus:ring-red-100]="hasError('lastName')"
+            [class.border-slate-200]="!hasError('lastName')"
+            [class.focus:ring-slate-100]="!hasError('lastName')"
+          />
+          @if (hasError('lastName')) {
+            <p class="mt-1 text-xs text-red-500">El primer apellido es obligatorio.</p>
+          }
+        </div>
+
+        <!-- Segundo apellido -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Segundo apellido
+          </label>
+          <input
+            type="text"
+            formControlName="secondLastName"
+            placeholder="Ej. García"
+            class="h-9 w-full rounded-md border border-slate-200 px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2 focus:ring-slate-100"
+          />
+        </div>
+
+        <!-- Nombre de usuario -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Nombre de usuario <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="userName"
+            placeholder="Ej. jperez"
+            class="h-9 w-full rounded-md border px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2"
+            [class.border-red-300]="hasError('userName')"
+            [class.focus:ring-red-100]="hasError('userName')"
+            [class.border-slate-200]="!hasError('userName')"
+            [class.focus:ring-slate-100]="!hasError('userName')"
+          />
+          @if (hasError('userName')) {
+            <p class="mt-1 text-xs text-red-500">El nombre de usuario es obligatorio.</p>
+          }
+        </div>
+
+        <!-- Email -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Email <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="correo@empresa.com"
+            class="h-9 w-full rounded-md border px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2"
+            [class.border-red-300]="hasError('email')"
+            [class.focus:ring-red-100]="hasError('email')"
+            [class.border-slate-200]="!hasError('email')"
+            [class.focus:ring-slate-100]="!hasError('email')"
+          />
+          @if (hasError('email')) {
+            <p class="mt-1 text-xs text-red-500">Ingrese un email válido.</p>
+          }
+        </div>
+
+        <!-- Rol -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Rol <span class="text-red-400">*</span>
+          </label>
+          <select
+            formControlName="roleId"
+            class="h-9 w-full rounded-md border bg-white px-3 text-sm text-slate-800 outline-none transition focus:ring-2"
+            [class.border-red-300]="hasError('roleId')"
+            [class.focus:ring-red-100]="hasError('roleId')"
+            [class.border-slate-200]="!hasError('roleId')"
+            [class.focus:ring-slate-100]="!hasError('roleId')"
+          >
+            <option [ngValue]="null" disabled>Seleccione un rol</option>
+            @for (role of roles; track role.value) {
+              <option [ngValue]="+role.value">{{ role.text }}</option>
+            }
+          </select>
+          @if (hasError('roleId')) {
+            <p class="mt-1 text-xs text-red-500">Seleccione un rol válido.</p>
+          }
+        </div>
+
+        <!-- Estado -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Estado <span class="text-red-400">*</span>
+          </label>
+          <select
+            formControlName="isActive"
+            class="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:ring-2 focus:ring-slate-100"
+          >
+            <option [ngValue]="true">Activo</option>
+            <option [ngValue]="false">Inactivo</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-8 flex items-center justify-end gap-3 border-t border-slate-100 pt-5">
+        <button
+          type="button"
+          (click)="cancel()"
+          [disabled]="isSaving()"
+          class="inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 px-4 text-sm font-medium text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 disabled:opacity-50"
+        >
+          <lucide-angular [img]="icons.X" class="h-4 w-4"></lucide-angular>
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="isSaving()"
+          class="inline-flex h-9 items-center gap-2 rounded-md bg-blue-500 px-4 text-sm font-medium text-white transition hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"
+        >
+          <lucide-angular [img]="icons.Save" class="h-4 w-4"></lucide-angular>
+          {{ isSaving() ? 'Guardando...' : (isEditMode() ? 'Guardar cambios' : 'Crear usuario') }}
+        </button>
+      </div>
+    </form>
+  }
+
+</div>

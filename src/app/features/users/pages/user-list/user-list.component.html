@@ -1,0 +1,151 @@
+<app-loading-spinner [show]="isLoading" message="Cargando usuarios..." />
+
+<!-- Page header -->
+<div class="mb-5 flex items-center justify-between">
+  <nav class="flex items-center gap-1.5 text-sm text-slate-400">
+    <a
+      routerLink="/home"
+      class="flex items-center gap-1 font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      <lucide-angular [img]="icons.House" class="h-4 w-4"></lucide-angular>
+      Home
+    </a>
+    <lucide-angular [img]="icons.ChevronRight" class="h-3.5 w-3.5"></lucide-angular>
+    <span class="font-semibold text-slate-700">Usuarios</span>
+  </nav>
+
+  <h1 class="text-xl font-bold text-slate-800">Usuarios</h1>
+</div>
+
+<!-- Card -->
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+  <!-- Toolbar -->
+  <div class="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-3">
+    <label class="flex h-9 w-64 items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 text-sm text-slate-500 focus-within:border-slate-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-slate-100">
+      <lucide-angular [img]="icons.Search" class="h-4 w-4 shrink-0"></lucide-angular>
+      <input
+        type="text"
+        placeholder="Buscar usuario..."
+        [(ngModel)]="search"
+        (ngModelChange)="onSearchChange()"
+        class="w-full border-0 bg-transparent p-0 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-0"
+      />
+    </label>
+
+    <a
+      routerLink="nuevo"
+      class="inline-flex h-9 items-center gap-2 rounded-md bg-blue-500 px-3.5 text-sm font-medium text-white transition hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+    >
+      <lucide-angular [img]="icons.UserRoundPlus" class="h-4 w-4"></lucide-angular>
+      <span class="hidden sm:inline">Nuevo usuario</span>
+    </a>
+  </div>
+
+  <!-- Cards (mobile) -->
+  <div class="divide-y divide-slate-100 sm:hidden">
+    @for (user of pagedUsers; track user.id) {
+      <div class="flex items-start justify-between gap-3 px-4 py-4">
+        <div class="min-w-0 flex-1 space-y-2">
+          <p class="font-semibold text-slate-800">{{ user.fullName }}</p>
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-1.5 text-xs">
+              <span class="w-12 shrink-0 font-medium text-slate-400">Email</span>
+              <span class="truncate text-slate-600">{{ user.email }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs">
+              <span class="w-12 shrink-0 font-medium text-slate-400">Alias</span>
+              <span class="text-slate-600">{{ user.userName }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs">
+              <span class="w-12 shrink-0 font-medium text-slate-400">Rol</span>
+              <span class="text-slate-600">{{ user.roleName }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs">
+              <span class="w-12 shrink-0 font-medium text-slate-400">Estado</span>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="user.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'"
+              >
+                {{ user.isActive ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          [routerLink]="[user.id, 'editar']"
+          appTooltip="Editar usuario"
+          class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-slate-200"
+        >
+          <lucide-angular [img]="icons.Pencil" class="h-4 w-4"></lucide-angular>
+        </button>
+      </div>
+    } @empty {
+      <p class="px-4 py-8 text-center text-sm text-slate-400">No se encontraron usuarios.</p>
+    }
+  </div>
+
+  <!-- Table (desktop) -->
+  <div class="hidden overflow-x-auto sm:block">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-100 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <th class="px-5 py-3">Nombres</th>
+          <th class="px-5 py-3">Email</th>
+          <th class="px-5 py-3">Alias</th>
+          <th class="px-5 py-3">Rol</th>
+          <th class="px-5 py-3">Estado</th>
+          <th class="px-5 py-3 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        @for (user of pagedUsers; track user.id) {
+          <tr class="transition hover:bg-slate-50">
+            <td class="px-5 py-2.5">
+              <span class="font-medium text-slate-600">{{ user.fullName }}</span>
+            </td>
+            <td class="px-5 py-2.5 text-slate-500">{{ user.email }}</td>
+            <td class="px-5 py-2.5 text-slate-600">{{ user.userName }}</td>
+            <td class="px-5 py-2.5 text-slate-600">
+              {{ user.roleName }}
+            </td>
+            <td class="px-5 py-2.5">
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="user.isActive
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : 'bg-red-50 text-red-600'"
+              >
+                {{ user.isActive ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td class="px-5 py-2.5 text-center">
+              <button
+                type="button"
+                [routerLink]="[user.id, 'editar']"
+                appTooltip="Editar usuario"
+                class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-slate-200"
+              >
+                <lucide-angular [img]="icons.Pencil" class="h-4 w-4"></lucide-angular>
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="px-5 py-8 text-center text-sm text-slate-400">No se encontraron usuarios.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="filteredUsers.length"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  />
+</div>
