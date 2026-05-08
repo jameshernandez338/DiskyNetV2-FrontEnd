@@ -1,0 +1,250 @@
+<app-loading-spinner [show]="isLoading || isSaving" message="Procesando..." />
+
+<app-confirm-dialog
+  [show]="showDeleteDialog"
+  title="Eliminar subcategoría"
+  [message]="'¿Estás seguro de que deseas eliminar la subcategoría \'' + pendingDeleteName + '\'? Esta acción no se puede deshacer.'"
+  confirmLabel="Eliminar"
+  (confirmed)="confirmDelete()"
+  (cancelled)="cancelDelete()"
+/>
+
+<!-- Page header -->
+<div class="mb-5 flex items-center justify-between">
+  <nav class="flex items-center gap-1.5 text-sm text-slate-400">
+    <a
+      routerLink="/home"
+      class="flex items-center gap-1 font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      <lucide-angular [img]="icons.House" class="h-4 w-4"></lucide-angular>
+      Home
+    </a>
+    <lucide-angular [img]="icons.ChevronRight" class="h-3.5 w-3.5"></lucide-angular>
+    <span class="font-semibold text-slate-700">Subcategorías</span>
+  </nav>
+
+  <h1 class="text-xl font-bold text-slate-800">Subcategorías</h1>
+</div>
+
+<!-- Card -->
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+  <!-- Toolbar -->
+  <div class="flex items-center gap-3 border-b border-slate-100 px-5 py-3">
+    <label class="flex h-9 w-64 items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 text-sm text-slate-500 focus-within:border-slate-300 focus-within:bg-white focus-within:ring-2 focus-within:ring-slate-100">
+      <lucide-angular [img]="icons.Search" class="h-4 w-4 shrink-0"></lucide-angular>
+      <input
+        type="text"
+        placeholder="Buscar subcategoría..."
+        [(ngModel)]="search"
+        (ngModelChange)="onSearchChange()"
+        class="w-full border-0 bg-transparent p-0 text-sm text-slate-700 outline-none placeholder:text-slate-400 focus:ring-0"
+      />
+    </label>
+  </div>
+
+  <!-- Cards (mobile) -->
+  <div class="divide-y divide-slate-100 sm:hidden">
+    <!-- Add row (mobile) -->
+    <div class="flex flex-col gap-2 px-4 py-3">
+      <input
+        type="text"
+        [(ngModel)]="newSubCategoryName"
+        placeholder="Nueva subcategoría..."
+        (keyup.enter)="addSubCategory()"
+        class="h-8 w-full rounded-md border border-slate-200 bg-slate-50 px-2.5 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
+      />
+      <div class="flex items-center gap-2">
+        <select
+          [(ngModel)]="newCategoryId"
+          class="h-8 min-w-0 flex-1 rounded-md border border-slate-200 bg-slate-50 px-2.5 text-sm text-slate-800 outline-none focus:border-blue-300 focus:bg-white focus:ring-2 focus:ring-blue-100"
+        >
+          <option value="">Seleccionar categoría...</option>
+          @for (cat of categoryCombo; track cat.value) {
+            <option [value]="cat.value">{{ cat.text }}</option>
+          }
+        </select>
+        <button type="button" (click)="addSubCategory()" [disabled]="!newSubCategoryName.trim() || !newCategoryId || isSaving" appTooltip="Agregar"
+          class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-blue-500 text-white transition hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50">
+          <lucide-angular [img]="icons.Plus" class="h-4 w-4"></lucide-angular>
+        </button>
+      </div>
+    </div>
+
+    @for (sub of pagedSubCategories; track sub.subCategoryId) {
+      <div class="flex items-center justify-between gap-3 px-4 py-3">
+        @if (editingId === sub.subCategoryId) {
+          <div class="flex min-w-0 flex-1 flex-col gap-1.5">
+            <input
+              type="text"
+              [(ngModel)]="editingName"
+              (keyup.enter)="saveEdit(sub.subCategoryId)"
+              (keyup.escape)="cancelEdit()"
+              class="h-8 w-full rounded-md border border-blue-300 px-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-100"
+            />
+            <select
+              [(ngModel)]="editingCategoryId"
+              class="h-8 w-full rounded-md border border-blue-300 px-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="">Seleccionar categoría...</option>
+              @for (cat of categoryCombo; track cat.value) {
+                <option [value]="cat.value">{{ cat.text }}</option>
+              }
+            </select>
+          </div>
+          <div class="flex shrink-0 gap-1">
+            <button type="button" (click)="saveEdit(sub.subCategoryId)" appTooltip="Guardar"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-md text-emerald-600 transition hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-200">
+              <lucide-angular [img]="icons.Check" class="h-4 w-4"></lucide-angular>
+            </button>
+            <button type="button" (click)="cancelEdit()" appTooltip="Cancelar"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200">
+              <lucide-angular [img]="icons.X" class="h-4 w-4"></lucide-angular>
+            </button>
+          </div>
+        } @else {
+          <div class="min-w-0 flex-1 space-y-0.5">
+            <p class="font-semibold text-slate-800">{{ sub.subCategoryName }}</p>
+            <p class="text-xs text-slate-500">{{ sub.categoryName }}</p>
+            <p class="text-xs text-slate-400">ID: {{ sub.subCategoryId }}</p>
+          </div>
+          <div class="flex shrink-0 gap-1">
+            <button type="button" (click)="startEdit(sub)" appTooltip="Editar"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-slate-200">
+              <lucide-angular [img]="icons.Pencil" class="h-4 w-4"></lucide-angular>
+            </button>
+            <button type="button" (click)="requestDelete(sub)" appTooltip="Eliminar"
+              class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-200">
+              <lucide-angular [img]="icons.Trash2" class="h-4 w-4"></lucide-angular>
+            </button>
+          </div>
+        }
+      </div>
+    } @empty {
+      <p class="px-4 py-8 text-center text-sm text-slate-400">No se encontraron subcategorías.</p>
+    }
+  </div>
+
+  <!-- Table (desktop) -->
+  <div class="hidden overflow-x-auto sm:block">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-slate-100 bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <th class="w-20 px-5 py-3">ID</th>
+          <th class="w-1/2 px-5 py-3">Subcategoría</th>
+          <th class="w-1/2 px-5 py-3">Categoría</th>
+          <th class="w-28 px-5 py-3 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-slate-100">
+        <!-- Add row -->
+        <tr class="border-b border-slate-100 bg-slate-50/60">
+          <td class="px-5 py-2 text-slate-400 text-xs">—</td>
+          <td class="px-5 py-2">
+            <input
+              type="text"
+              [(ngModel)]="newSubCategoryName"
+              placeholder="Nueva subcategoría..."
+              (keyup.enter)="addSubCategory()"
+              class="h-8 w-full rounded-md border border-slate-200 bg-white px-2.5 text-sm text-slate-800 outline-none placeholder:text-slate-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+            />
+          </td>
+          <td class="px-5 py-2">
+            <select
+              [(ngModel)]="newCategoryId"
+              class="h-8 w-full rounded-md border border-slate-200 bg-white px-2.5 text-sm text-slate-800 outline-none focus:border-blue-300 focus:ring-2 focus:ring-blue-100"
+            >
+              <option value="">Categoría...</option>
+              @for (cat of categoryCombo; track cat.value) {
+                <option [value]="cat.value">{{ cat.text }}</option>
+              }
+            </select>
+          </td>
+          <td class="px-5 py-2">
+            <div class="flex items-center justify-center">
+              <button
+                type="button"
+                (click)="addSubCategory()"
+                [disabled]="!newSubCategoryName.trim() || !newCategoryId || isSaving"
+                appTooltip="Agregar subcategoría"
+                class="inline-flex h-8 w-8 items-center justify-center rounded-md text-blue-500 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-200 disabled:opacity-40"
+              >
+                <lucide-angular [img]="icons.Plus" class="h-4 w-4"></lucide-angular>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        @for (sub of pagedSubCategories; track sub.subCategoryId) {
+          <tr class="transition hover:bg-slate-50">
+            <td class="px-5 py-2 text-slate-500">{{ sub.subCategoryId }}</td>
+            <td class="px-5 py-2">
+              @if (editingId === sub.subCategoryId) {
+                <input
+                  type="text"
+                  [(ngModel)]="editingName"
+                  (keyup.enter)="saveEdit(sub.subCategoryId)"
+                  (keyup.escape)="cancelEdit()"
+                  class="h-8 w-full rounded-md border border-blue-300 px-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-100"
+                />
+              } @else {
+                <span class="font-medium text-slate-700">{{ sub.subCategoryName }}</span>
+              }
+            </td>
+            <td class="px-5 py-2">
+              @if (editingId === sub.subCategoryId) {
+                <select
+                  [(ngModel)]="editingCategoryId"
+                  class="h-8 w-full rounded-md border border-blue-300 px-2.5 text-sm text-slate-800 outline-none focus:ring-2 focus:ring-blue-100"
+                >
+                  <option value="">Categoría...</option>
+                  @for (cat of categoryCombo; track cat.value) {
+                    <option [value]="cat.value">{{ cat.text }}</option>
+                  }
+                </select>
+              } @else {
+                <span class="text-slate-600">{{ sub.categoryName }}</span>
+              }
+            </td>
+            <td class="px-5 py-2">
+              <div class="flex items-center justify-center gap-1">
+                @if (editingId === sub.subCategoryId) {
+                  <button type="button" (click)="saveEdit(sub.subCategoryId)" appTooltip="Guardar"
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-md text-emerald-600 transition hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-200">
+                    <lucide-angular [img]="icons.Check" class="h-4 w-4"></lucide-angular>
+                  </button>
+                  <button type="button" (click)="cancelEdit()" appTooltip="Cancelar"
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-200">
+                    <lucide-angular [img]="icons.X" class="h-4 w-4"></lucide-angular>
+                  </button>
+                } @else {
+                  <button type="button" (click)="startEdit(sub)" appTooltip="Editar"
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-slate-200">
+                    <lucide-angular [img]="icons.Pencil" class="h-4 w-4"></lucide-angular>
+                  </button>
+                  <button type="button" (click)="requestDelete(sub)" appTooltip="Eliminar"
+                    class="inline-flex h-8 w-8 items-center justify-center rounded-md text-slate-400 transition hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-200">
+                    <lucide-angular [img]="icons.Trash2" class="h-4 w-4"></lucide-angular>
+                  </button>
+                }
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="px-5 py-8 text-center text-sm text-slate-400">No se encontraron subcategorías.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <app-pagination
+    [currentPage]="currentPage"
+    [pageSize]="pageSize"
+    [totalItems]="filteredSubCategories.length"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)"
+  />
+</div>

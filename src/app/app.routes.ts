@@ -38,6 +38,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/pending-delivery/pending-deliveries.routes').then(m => m.DELIVERY_ROUTES)
       },
+      {
+        path: 'tablas',
+        loadChildren: () =>
+          import('./features/tables/tables.routes').then(m => m.TABLES_ROUTES)
+      },
     ]
   },
   {
