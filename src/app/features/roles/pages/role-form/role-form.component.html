@@ -1,0 +1,129 @@
+<app-loading-spinner [show]="isLoading()" message="Cargando datos..." />
+<app-loading-spinner [show]="isSaving()" [message]="isEditMode() ? 'Guardando cambios...' : 'Creando rol...'" />
+
+<!-- Page header -->
+<div class="mb-5 flex items-center justify-between">
+  <nav class="flex items-center gap-1.5 text-sm text-slate-400">
+    <a
+      routerLink="/home"
+      class="flex items-center gap-1 font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      <lucide-angular [img]="icons.House" class="h-4 w-4"></lucide-angular>
+      Home
+    </a>
+    <lucide-angular [img]="icons.ChevronRight" class="h-3.5 w-3.5"></lucide-angular>
+    <a
+      routerLink="/roles"
+      class="font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      Roles
+    </a>
+    <lucide-angular [img]="icons.ChevronRight" class="h-3.5 w-3.5"></lucide-angular>
+    <span class="font-semibold text-slate-700">{{ isEditMode() ? 'Editar rol' : 'Nuevo rol' }}</span>
+  </nav>
+
+  <h1 class="text-xl font-bold text-slate-800">{{ isEditMode() ? 'Editar rol' : 'Nuevo rol' }}</h1>
+</div>
+
+<!-- Card -->
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+  <!-- Card header -->
+  <div class="border-b border-slate-100 px-6 py-4">
+    <p class="text-sm text-slate-500">
+      {{ isEditMode() ? 'Modifique los datos del rol.' : 'Complete los datos para crear un nuevo rol.' }}
+    </p>
+  </div>
+
+  <!-- Loading -->
+  @if (isLoading()) {
+    <div class="flex items-center justify-center py-16 text-slate-400 text-sm">
+      Cargando datos del rol...
+    </div>
+  }
+
+  <!-- Form -->
+  @if (!isLoading()) {
+    <form [formGroup]="form" (ngSubmit)="save()" class="px-6 py-6">
+      <div class="grid gap-5 sm:grid-cols-2">
+
+        <!-- Nombre -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Nombre <span class="text-red-400">*</span>
+          </label>
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Ej. Administrador"
+            class="h-9 w-full rounded-md border px-3 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2"
+            [class.border-red-300]="hasError('name')"
+            [class.focus:ring-red-100]="hasError('name')"
+            [class.border-slate-200]="!hasError('name')"
+            [class.focus:ring-slate-100]="!hasError('name')"
+          />
+          @if (hasError('name')) {
+            <p class="mt-1 text-xs text-red-500">El nombre es obligatorio.</p>
+          }
+        </div>
+
+        <!-- Estado -->
+        <div>
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Estado <span class="text-red-400">*</span>
+          </label>
+          <select
+            formControlName="isActive"
+            class="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:ring-2 focus:ring-slate-100"
+          >
+            <option [ngValue]="true">Activo</option>
+            <option [ngValue]="false">Inactivo</option>
+          </select>
+        </div>
+
+        <!-- Descripción -->
+        <div class="sm:col-span-2">
+          <label class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Descripción <span class="text-red-400">*</span>
+          </label>
+          <textarea
+            formControlName="description"
+            rows="3"
+            placeholder="Descripción del rol..."
+            class="w-full rounded-md border px-3 py-2 text-sm text-slate-800 outline-none transition placeholder:text-slate-400 focus:ring-2 resize-none"
+            [class.border-red-300]="hasError('description')"
+            [class.focus:ring-red-100]="hasError('description')"
+            [class.border-slate-200]="!hasError('description')"
+            [class.focus:ring-slate-100]="!hasError('description')"
+          ></textarea>
+          @if (hasError('description')) {
+            <p class="mt-1 text-xs text-red-500">La descripción es obligatoria.</p>
+          }
+        </div>
+
+      </div>
+
+      <!-- Actions -->
+      <div class="mt-8 flex items-center justify-end gap-3 border-t border-slate-100 pt-5">
+        <button
+          type="button"
+          (click)="cancel()"
+          [disabled]="isSaving()"
+          class="inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 px-4 text-sm font-medium text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 disabled:opacity-50"
+        >
+          <lucide-angular [img]="icons.X" class="h-4 w-4"></lucide-angular>
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          [disabled]="isSaving()"
+          class="inline-flex h-9 items-center gap-2 rounded-md bg-blue-500 px-4 text-sm font-medium text-white transition hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"
+        >
+          <lucide-angular [img]="icons.Save" class="h-4 w-4"></lucide-angular>
+          {{ isSaving() ? 'Guardando...' : (isEditMode() ? 'Guardar cambios' : 'Crear rol') }}
+        </button>
+      </div>
+    </form>
+  }
+
+</div>

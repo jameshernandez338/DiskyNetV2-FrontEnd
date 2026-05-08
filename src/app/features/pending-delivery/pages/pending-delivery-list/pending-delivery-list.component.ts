@@ -1,51 +1,48 @@
-import { NgClass } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import {
   ChevronRight,
+  Eye,
   House,
-  KeyRound,
   LucideAngularModule,
-  Pencil,
   Search,
-  ShieldPlus
+  Truck
 } from 'lucide-angular';
 
-import { RolesService } from '@core/services/roles.service';
-import { Role } from '../../models/role.model';
+import { DeliveryService } from '@core/services/pending-delivery.service';
+import { SupplierDocumentResponse } from '../../models/supplier-document-response.model';
 import { LoadingSpinnerComponent } from '@shared/components/loading-spinner/loading-spinner.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { TooltipDirective } from '@shared/directives/tooltip.directive';
 
 @Component({
-  selector: 'app-roles-list',
-  imports: [NgClass, RouterLink, FormsModule, LucideAngularModule, LoadingSpinnerComponent, PaginationComponent, TooltipDirective],
-  templateUrl: './roles-list.component.html'
+  selector: 'app-despachos-list',
+  imports: [RouterLink, FormsModule, LucideAngularModule, LoadingSpinnerComponent, PaginationComponent, TooltipDirective],
+  templateUrl: './pending-delivery-list.component.html'
 })
-export class RolesListComponent implements OnInit {
-  private readonly rolesService = inject(RolesService);
+export class DespachosListComponent implements OnInit {
+  private readonly deliveriesService = inject(DeliveryService);
 
   icons = {
     House,
     Search,
-    ShieldPlus,
-    Pencil,
-    KeyRound,
+    Truck,
+    Eye,
     ChevronRight
   };
 
   search = '';
-  roles: Role[] = [];
+  documents: SupplierDocumentResponse[] = [];
   isLoading = false;
   currentPage = 1;
   pageSize = 10;
 
   ngOnInit(): void {
     this.isLoading = true;
-    this.rolesService.getAllRoles().subscribe({
-      next: (roles) => {
-        this.roles = roles;
+    this.deliveriesService.getSupplierDocuments().subscribe({
+      next: (docs) => {
+        this.documents = docs;
         this.currentPage = 1;
       },
       complete: () => {
@@ -57,19 +54,23 @@ export class RolesListComponent implements OnInit {
     });
   }
 
-  get filteredRoles(): Role[] {
+  get filteredDocuments(): SupplierDocumentResponse[] {
     const q = this.search.toLowerCase();
-    if (!q) return this.roles;
-    return this.roles.filter(
-      (r) =>
-        r.name.toLowerCase().includes(q) ||
-        r.description.toLowerCase().includes(q)
+    if (!q) return this.documents;
+    return this.documents.filter(
+      (d) =>
+        d.number.toLowerCase().includes(q) ||
+        d.status.toLowerCase().includes(q)
     );
   }
 
-  get pagedRoles(): Role[] {
+  get pagedDocuments(): SupplierDocumentResponse[] {
     const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredRoles.slice(start, start + this.pageSize);
+    return this.filteredDocuments.slice(start, start + this.pageSize);
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1;
   }
 
   onPageChange(page: number): void {
@@ -78,10 +79,6 @@ export class RolesListComponent implements OnInit {
 
   onPageSizeChange(size: number): void {
     this.pageSize = size;
-    this.currentPage = 1;
-  }
-
-  onSearchChange(): void {
     this.currentPage = 1;
   }
 }

@@ -1,0 +1,127 @@
+<app-loading-spinner [show]="loading()" message="Cargando permisos..." />
+
+<!-- Page header -->
+<div class="mb-5 flex items-center justify-between">
+  <nav class="flex items-center gap-1.5 text-sm text-slate-400">
+    <a
+      routerLink="/home"
+      class="font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      Home
+    </a>
+    <span class="text-slate-300">›</span>
+    <a
+      routerLink="/roles"
+      class="font-medium text-slate-500 transition hover:text-slate-700"
+    >
+      Roles
+    </a>
+    <span class="text-slate-300">›</span>
+    <span class="font-semibold text-slate-700">Gestionar permisos</span>
+  </nav>
+
+  <h1 class="text-xl font-bold text-slate-800">Gestionar permisos</h1>
+</div>
+
+<!-- Card -->
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+
+  <!-- Card header -->
+  <div class="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+    <div class="flex items-center gap-2.5">
+      <lucide-angular [img]="icons.KeyRound" class="h-5 w-5 text-amber-500"></lucide-angular>
+      <div>
+        <h2 class="text-base font-semibold text-slate-800">{{ roleName() }}</h2>
+        <p class="text-xs text-slate-400">Gestione los permisos asignados a este rol.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Groups -->
+  @if (!loading()) {
+    <div class="divide-y divide-slate-100">
+
+      @for (group of menuGroups(); track group.id) {
+        <div>
+
+          <!-- Group toggle header -->
+          <button
+            type="button"
+            (click)="toggleGroup(group.id)"
+            class="flex w-full items-center justify-between px-6 py-3 text-left transition hover:bg-slate-50"
+          >
+            <span class="text-sm font-semibold text-slate-700">{{ group.name }}</span>
+            <lucide-angular
+              [img]="icons.ChevronDown"
+              class="h-4 w-4 text-slate-400 transition-transform duration-200"
+              [class.-rotate-90]="!isExpanded(group.id)"
+            ></lucide-angular>
+          </button>
+
+          <!-- Group menus -->
+          @if (isExpanded(group.id)) {
+            <div class="space-y-4 border-t border-slate-50 bg-slate-50/50 px-6 py-4">
+
+              @for (menu of group.menus; track menu.menuId) {
+                <div>
+
+                  @if (menu.parentId !== null) {
+                    <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      {{ menu.menuName }}
+                    </p>
+                  }
+
+                  <div class="flex flex-wrap gap-2">
+                    @for (action of menu.actions; track action.actionId) {
+                      <label
+                        class="inline-flex cursor-pointer items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm text-slate-600 transition hover:border-blue-200 hover:bg-blue-50 has-checked:border-blue-300 has-checked:bg-blue-50 has-checked:text-blue-700"
+                      >
+                        <input
+                          type="checkbox"
+                          class="h-3.5 w-3.5 rounded border-slate-300 accent-blue-500 focus:ring-2 focus:ring-blue-200"
+                          [checked]="isActionSelected(menu.menuId, action.actionId)"
+                          (change)="toggleAction(menu.menuId, action.actionId, $any($event.target).checked)"
+                        />
+                        {{ action.actionDescription }}
+                      </label>
+                    }
+                  </div>
+
+                </div>
+              }
+
+            </div>
+          }
+
+        </div>
+      } @empty {
+        <div class="flex items-center justify-center py-16 text-sm text-slate-400">
+          No hay menús disponibles para este rol.
+        </div>
+      }
+
+    </div>
+  }
+
+  <!-- Footer actions -->
+  @if (!loading() && menuGroups().length > 0) {
+    <div class="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+      <a
+        routerLink="/roles"
+        class="inline-flex h-9 items-center gap-2 rounded-md border border-slate-200 px-4 text-sm font-medium text-slate-600 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200"
+      >
+        Volver
+      </a>
+      <button
+        type="button"
+        (click)="save()"
+        [disabled]="loading()"
+        class="inline-flex h-9 items-center gap-2 rounded-md bg-blue-500 px-4 text-sm font-medium text-white transition hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50"
+      >
+        <lucide-angular [img]="icons.Save" class="h-4 w-4"></lucide-angular>
+        Guardar cambios
+      </button>
+    </div>
+  }
+
+</div>

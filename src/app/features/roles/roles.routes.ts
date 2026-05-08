@@ -6,7 +6,7 @@ export const ROLES_ROUTES: Routes = [
     loadComponent: () =>
       import('./pages/roles-list/roles-list.component').then(m => m.RolesListComponent)
   },
-  /*{
+  {
     path: 'nuevo',
     loadComponent: () =>
       import('./pages/role-form/role-form.component').then(m => m.RoleFormComponent)
@@ -20,5 +20,5 @@ export const ROLES_ROUTES: Routes = [
     path: ':id/permisos',
     loadComponent: () =>
       import('./pages/role-permissions/role-permissions.component').then(m => m.RolePermissionsComponent)
-  }*/
+  }
 ];

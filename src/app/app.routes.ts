@@ -33,6 +33,11 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./features/roles/roles.routes').then(m => m.ROLES_ROUTES)
       },
+      {
+        path: 'despachos-pendientes',
+        loadChildren: () =>
+          import('./features/pending-delivery/pending-deliveries.routes').then(m => m.DELIVERY_ROUTES)
+      },
     ]
   },
   {
